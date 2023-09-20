@@ -1,11 +1,11 @@
 import argparse
 import numpy as np
-from common import preprocess_graph
+from common_MA import preprocess_graph
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser("Deep RL for Cooperative Multi-Agent Control with Continuous Action Space")
-    parser.add_argument("--env-name", type=str, default="routing6v4")
+    parser.add_argument("--env-name", type=str, default="simple_spread")
     parser.add_argument("--agent-name", type=str, default="MAAC", help="IND_AC, MADDPG, ATT_MADDPG, NCC_AC")
     parser.add_argument("--head-count", type=int, default=4, help="number of heads in ATT_MADDPG, MAAC, etc.")
     parser.add_argument("--hidden-layer-count", type=int, default=2, help="number of hidden layers")
@@ -13,7 +13,7 @@ def parse_arguments():
     args = parser.parse_args()
     args.exp_name = args.env_name + "-" + args.agent_name
 
-    if args.env_name in ["routing6v4", "routing12v20", "routing24v128"]:
+    if args.env_name in ["routing6v4", "routing12v20", "routing24v128", "simple_spread"]:
         if args.env_name == "routing6v4":
             controllable_router_list = ["A", "B"]
             args.agent_count = len(controllable_router_list)
@@ -149,16 +149,27 @@ def parse_arguments():
             args.alpha_L2 = 0.2  # the weight of L2-loss in NCC-AC
             args.alpha_KL = 0.2  # the weight of KL-loss in NCC-AC
             args.alpha_CON = 0.1  # the weight of contrastive-loss in BCC
-        args.adj_norm = preprocess_graph(args.adj)
-        args.buffer_size = 60000
-        args.batch_size = 64
+        elif args.env_name == "simple_spread":
+            args.agent_count = 3
+            args.action_dim_list = [2, 2, 2]
+            args.observation_dim_list = [18, 18, 18]
+            args.state_dim_list = args.observation_dim_list
+            args.episode_count = 10000  # 2000
+            args.epsilon = 1.0
+            args.epsilon_delta = 0.001
+            args.epsilon_end = 0.0
+            args.max_episode_len = 50
+            args.gamma = 0.95
+        # args.adj_norm = preprocess_graph(args.adj)
+        args.buffer_size = 100000
+        args.batch_size = 256  # was 64
         args.exp_count = 5  # 2 if args.env_name == "routing24v128" else 5
         args.hidden_dim = 32
-        args.lr_actor = 1e-3
-        args.lr_critic = 1e-2
-        args.tau = 1e-3
+        args.lr_actor = 0.0001
+        args.lr_critic = 0.0001
+        args.tau = 0.001
         args.clipped_norm_value = 10.0
-        args.seed = 0
+        args.seed = 777
         args.flow_type = "synthetic"
     else:
         raise ValueError("args.env_name is not defined! ...")

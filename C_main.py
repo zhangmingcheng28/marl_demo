@@ -35,7 +35,8 @@ def exploration(action_all, args):
 def training(args, agent, batch, writer=None, training_step=0):
     observation_list, action_list, reward_list, next_observation_list = [], [], [], []
     for i in range(args.agent_count):
-        observation_i_batch = np.concatenate([e[0][i] for e in batch])
+        # each agent
+        observation_i_batch = np.concatenate([e[0][i] for e in batch])  # np_array, batch x single_agent_feature
         action_i_batch = np.asarray([e[1][i] for e in batch])  # if action_dim==1, need add '.reshape(-1, 1)'
         reward_i_batch = np.asarray([e[2][i + 1] for e in batch]).reshape(-1, 1)
         # rewards[0] is our objective reward, while rewards[1~N] is the training reward of agent 1~N, respectively.
@@ -83,6 +84,7 @@ def main(args, writer):
             batch = replay_buffer.sample()
             if done or step == args.max_episode_len - 1:  # small trick: current episode experience replay
                 batch.extend(temp_buffer)
+            print("executed training")
             training(args, agent, batch, writer, global_training_step)
             global_training_step += 1
             if done:
