@@ -6,7 +6,7 @@ from common import preprocess_graph
 def parse_arguments():
     parser = argparse.ArgumentParser("Deep RL for Cooperative Multi-Agent Control with Continuous Action Space")
     parser.add_argument("--env-name", type=str, default="routing6v4")
-    parser.add_argument("--agent-name", type=str, default="MAAC", help="IND_AC, MADDPG, ATT_MADDPG, NCC_AC")
+    parser.add_argument("--agent-name", type=str, default="ATT_MADDPG", help="IND_AC, MADDPG, ATT_MADDPG, NCC_AC")
     parser.add_argument("--head-count", type=int, default=4, help="number of heads in ATT_MADDPG, MAAC, etc.")
     parser.add_argument("--hidden-layer-count", type=int, default=2, help="number of hidden layers")
     parser.add_argument("--results-dir", type=str, default="./result_mc/")

@@ -65,7 +65,7 @@ def main(args, writer):
     wandb.init(
         # set the wandb project where this run will be logged
         project="MADDPG_FrameWork",
-        name='MAAC_SS_test_'+str(current_date) + '_' + str(formatted_time),
+        name='MADDPG_SS_test_'+str(current_date) + '_' + str(formatted_time),
         # track hyperparameters and run metadata
         config={
             "learning_rate": args.lr_actor,
@@ -133,7 +133,7 @@ def main(args, writer):
         # wandb.log({'mean episode rewards': float(mean_ep_rw)})
         wandb.log({'Episode rewards': float(episode_reward)})
         # episode_reward_list.append(mean_ep_rw)
-        # save the model every 500 episodes
+        # save the model every 250 episodes
         if episode % 250 == 0:
             agent.save_model(str(episode))
     wandb.finish()

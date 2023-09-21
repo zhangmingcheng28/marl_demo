@@ -3,6 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 torch.autograd.set_detect_anomaly(True)
+import datetime
+import os
 
 USE_CUDA = False  # torch.cuda.is_available()  # ==> without image input, using cuda is a bad choice
 # besides, the NCC_VAE and MAAC are incompatible with cuda ... I do not fix it
@@ -678,8 +680,17 @@ class Agent(object):
 
     def save_model(self, output):
         print("save_model() ...")
-        torch.save(self.actor.state_dict(), '{}-actor.pkl'.format(output))
-        torch.save(self.critic.state_dict(), '{}-critic.pkl'.format(output))
+        now = datetime.datetime.now()
+        timestamp = now.strftime('%Y-%m-%d_%H-%M-%S')
+        if not os.path.exists(timestamp):
+            os.makedirs(timestamp)
+
+            # Use the timestamp in the filename and prepend the folder name
+        actor_filename = os.path.join(timestamp, '{}-actor.pkl'.format(output))
+        critic_filename = os.path.join(timestamp, '{}-critic.pkl'.format(output))
+
+        torch.save(self.actor.state_dict(), actor_filename)
+        torch.save(self.critic.state_dict(), critic_filename)
 
     def load_weights(self, output):
         print("load_weights() ...")
